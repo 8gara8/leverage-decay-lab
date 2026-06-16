@@ -1,0 +1,58 @@
+@import 'tailwindcss';
+
+/* Design tokens — SPEC.md §8.8. Carried over from the prototype's dark palette. */
+@theme {
+  /* Surfaces */
+  --color-bg: #0b1120; /* deep navy background */
+  --color-surface: #111a2e; /* card surface */
+  --color-surface-2: #16223c; /* raised surface */
+  --color-border: #243049; /* hairline border */
+
+  /* Text */
+  --color-ink: #e8eef9; /* primary text */
+  --color-ink-dim: #9aa8c4; /* secondary text */
+
+  /* Series + semantic accents */
+  --color-accent: #60a5fa; /* index 1x (blue) */
+  --color-accent-2: #f87171; /* leveraged Lx (red) */
+  --color-baseline: #fbbf24; /* amber baseline at 100 */
+  --color-good: #34d399; /* leverage wins (green) */
+  --color-bad: #f87171; /* leverage loses (red) */
+  --color-warn: #fbbf24; /* caution (amber) */
+
+  --radius-2xl: 1rem;
+
+  /* Type: system UI with Traditional Chinese fallbacks */
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang TC',
+    'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background-color: var(--color-bg);
+  /* subtle radial accent glows */
+  background-image:
+    radial-gradient(60rem 40rem at 15% -10%, rgba(96, 165, 250, 0.12), transparent 60%),
+    radial-gradient(50rem 36rem at 90% 0%, rgba(248, 113, 113, 0.1), transparent 60%);
+  background-attachment: fixed;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
