@@ -1,6 +1,8 @@
-// Kpi.tsx — a single KPI card (SPEC.md §9). Phase 2 shows the value directly;
-// the count-up animation arrives in Phase 3 (§8.5).
+// Kpi.tsx — a single KPI card (SPEC.md §9). The value count-up animates from
+// its previous number to the new target (~400ms) so changes feel responsive
+// (§8.5); the tone colour cross-fades when good/bad flips.
 
+import { useCountUp } from '../hooks/useCountUp'
 import { pct, pctAbs } from '../lib/format'
 
 export type KpiTone = 'good' | 'bad' | 'warn' | 'neutral'
@@ -22,7 +24,8 @@ const TONE_COLOR: Record<KpiTone, string> = {
 }
 
 export default function Kpi({ label, value, format, tone, sub, highlight }: KpiProps) {
-  const text = format === 'pct' ? pct(value) : pctAbs(value)
+  const animated = useCountUp(value)
+  const text = format === 'pct' ? pct(animated) : pctAbs(animated)
   return (
     <div
       className={`rounded-xl border p-3 sm:p-4 ${
@@ -33,7 +36,7 @@ export default function Kpi({ label, value, format, tone, sub, highlight }: KpiP
     >
       <div className="text-xs text-[var(--color-ink-dim)]">{label}</div>
       <div
-        className="mt-1 text-lg font-bold tabular-nums sm:text-xl"
+        className="mt-1 text-lg font-bold tabular-nums transition-colors duration-300 sm:text-xl"
         style={{ color: TONE_COLOR[tone] }}
       >
         {text}
