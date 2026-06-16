@@ -1,65 +1,89 @@
 // App.tsx — top-level layout. Owns sim state via useSimState and wires the
-// Phase 2 functional sandbox (SPEC.md §12 Phase 2, layout §8.1).
+// Phase 3 design upgrades on top of the Phase 2 sandbox (SPEC.md §8, §12).
 //
-// Mobile (single column) stacks: Hero → Chart → KPIs → Scenarios → Controls →
-// Narrative → table. On ≥1024px it becomes two columns: a narrow left column
-// (scenario picker + controls) beside a wide right column (chart, KPIs,
-// narrative, table). The big live Verdict banner, scenario sparkline cards and
-// story mode land in Phase 3.
+// Mobile (single column) stacks: Hero → Verdict → Chart → KPIs → Scenario cards
+// → Controls → Narrative → table (§8.1). On ≥1024px it becomes two columns: a
+// narrow left column (scenario cards + controls, sticky as a unit) beside a wide
+// right column (verdict, chart, KPIs, narrative, table). Story mode overlays on
+// a fresh visit; the verdict + narrative cross-fade on scenario change.
 
+import { useCallback, useState } from 'react'
 import { useSimState } from './state/useSimState'
 import Hero from './components/Hero'
+import Verdict from './components/Verdict'
 import Chart from './components/Chart'
 import KpiGrid from './components/KpiGrid'
-import ScenarioButtons from './components/ScenarioButtons'
+import ScenarioCards from './components/ScenarioCards'
 import Controls from './components/Controls'
 import Narrative from './components/Narrative'
 import DataTable from './components/DataTable'
+import StoryMode from './components/StoryMode'
+import type { Scenario } from './lib/sim'
+
+// Story mode greets first-time visitors. A shared link (Phase 4 URL state)
+// should drop straight into the sandbox, so we suppress it when share params
+// are present — wiring that's ready before url.ts lands.
+function hasShareParams(): boolean {
+  if (typeof window === 'undefined') return false
+  const p = new URLSearchParams(window.location.search)
+  return p.has('s') || p.has('sig') || p.has('d') || p.has('L')
+}
 
 export default function App() {
   const { state, config, result, set, reshuffle } = useSimState()
   const isMC = result.mc !== null
   const cloud = result.mc?.cloud
+  const [storyOpen, setStoryOpen] = useState(() => !hasShareParams())
+
+  // Stable so StoryMode's step effect only fires on an actual step change.
+  const selectScenario = useCallback((s: Scenario) => set({ scenario: s }), [set])
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-8 px-4 py-10 sm:px-6 sm:py-14">
-      <Hero />
+    <>
+      <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-8 px-4 py-10 sm:px-6 sm:py-14">
+        <Hero onOpenStory={() => setStoryOpen(true)} />
 
-      <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[20rem_minmax(0,1fr)] lg:items-start lg:gap-8">
-        {/* Chart — right column, top */}
-        <div className="lg:col-start-2 lg:row-start-1">
-          <Chart points={result.points} cloud={cloud} L={state.L} />
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[20rem_minmax(0,1fr)] lg:items-start lg:gap-8">
+          {/* Verdict — full-width takeaway, right column on desktop (§8.2) */}
+          <div key={`v-${state.scenario}`} className="lab-fade-in lg:col-start-2 lg:row-start-1">
+            <Verdict diff={result.diff} L={state.L} />
+          </div>
+
+          {/* Chart */}
+          <div className="lg:col-start-2 lg:row-start-2">
+            <Chart points={result.points} cloud={cloud} L={state.L} />
+          </div>
+
+          {/* KPIs */}
+          <div className="lg:col-start-2 lg:row-start-3">
+            <KpiGrid result={result} L={state.L} isMC={isMC} />
+          </div>
+
+          {/* Left column: scenario cards + controls, sticky as one unit on desktop */}
+          <div className="lg:col-start-1 lg:row-start-1 lg:row-end-6">
+            <div className="flex flex-col gap-6 lg:sticky lg:top-6">
+              <ScenarioCards active={state.scenario} onSelect={selectScenario} />
+              <Controls state={state} config={config} onChange={set} onReshuffle={reshuffle} />
+            </div>
+          </div>
+
+          {/* Narrative */}
+          <div key={`n-${state.scenario}`} className="lab-fade-in lg:col-start-2 lg:row-start-4">
+            <Narrative state={state} result={result} />
+          </div>
+
+          {/* Data table */}
+          <div className="lg:col-start-2 lg:row-start-5">
+            <DataTable points={result.points} L={state.L} />
+          </div>
         </div>
 
-        {/* KPIs — right column */}
-        <div className="lg:col-start-2 lg:row-start-2">
-          <KpiGrid result={result} L={state.L} isMC={isMC} />
-        </div>
+        <footer className="text-xs text-[var(--color-ink-dim)]">
+          Phase 3 · 互動沙盒 + 教學導覽。模擬皆於瀏覽器即時計算，無後端。分享連結與路徑動畫於 Phase 4 建置中。
+        </footer>
+      </main>
 
-        {/* Scenario picker — left column, sticky on desktop */}
-        <div className="lg:col-start-1 lg:row-start-1 lg:sticky lg:top-6">
-          <ScenarioButtons active={state.scenario} onSelect={(s) => set({ scenario: s })} />
-        </div>
-
-        {/* Controls — left column, sticky on desktop */}
-        <div className="lg:col-start-1 lg:row-start-2 lg:sticky lg:top-6">
-          <Controls state={state} config={config} onChange={set} onReshuffle={reshuffle} />
-        </div>
-
-        {/* Narrative — right column */}
-        <div className="lg:col-start-2 lg:row-start-3">
-          <Narrative state={state} result={result} />
-        </div>
-
-        {/* Data table — right column */}
-        <div className="lg:col-start-2 lg:row-start-4">
-          <DataTable points={result.points} L={state.L} />
-        </div>
-      </div>
-
-      <footer className="text-xs text-[var(--color-ink-dim)]">
-        Phase 2 · 互動沙盒。模擬皆於瀏覽器即時計算，無後端。教學模式、分享連結與動畫建置中。
-      </footer>
-    </main>
+      {storyOpen && <StoryMode onSelect={selectScenario} onClose={() => setStoryOpen(false)} />}
+    </>
   )
 }

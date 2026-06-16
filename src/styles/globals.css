@@ -57,6 +57,23 @@ body {
   }
 }
 
+/* Scenario-change transition (SPEC §8 "CSS transitions for scenario changes").
+   A keyed remount on scenario change replays this fade; reduced-motion users
+   get the final frame instantly via the override above. */
+@keyframes lab-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.lab-fade-in {
+  animation: lab-fade-in 320ms ease-out both;
+}
+
 /* Range slider — themed track + thumb, ≥44px touch target (SPEC §8.1). */
 .lab-slider {
   -webkit-appearance: none;

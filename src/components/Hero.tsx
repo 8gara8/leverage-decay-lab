@@ -1,12 +1,27 @@
-// Hero.tsx — title, hook line, and the core-intuition equation box (SPEC.md §9).
-// The big live Verdict banner (§8.2) is a separate Phase 3 component.
+// Hero.tsx — title, hook line, and the core-intuition equation box (SPEC.md §9),
+// plus a persistent 「教學模式」 button that reopens the guided walkthrough (§8.6).
 
-export default function Hero() {
+interface HeroProps {
+  onOpenStory?: () => void
+}
+
+export default function Hero({ onOpenStory }: HeroProps) {
   return (
     <header className="flex flex-col gap-3">
-      <span className="text-sm font-medium tracking-wide text-[var(--color-ink-dim)]">
-        Leverage Decay Lab
-      </span>
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-sm font-medium tracking-wide text-[var(--color-ink-dim)]">
+          Leverage Decay Lab
+        </span>
+        {onOpenStory && (
+          <button
+            type="button"
+            onClick={onOpenStory}
+            className="shrink-0 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-medium text-[var(--color-ink-dim)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-ink)]"
+          >
+            📖 教學模式
+          </button>
+        )}
+      </div>
       <h1 className="text-3xl font-bold leading-tight sm:text-4xl">槓桿衰減實驗室</h1>
       <p className="max-w-prose text-[var(--color-ink-dim)]">
         為什麼 2x／3x 槓桿型 ETF
