@@ -1,38 +1,45 @@
 // Hero.tsx — title, hook line, and the core-intuition equation box (SPEC.md §9),
-// plus a persistent 「教學模式」 button that reopens the guided walkthrough (§8.6).
+// plus a persistent 「教學模式」 button that reopens the guided walkthrough (§8.6)
+// and the Phase 5 language toggle (§12). Static copy is locale-keyed via i18n.
+
+import { useLocale } from '../state/LocaleProvider'
+import LangToggle from './LangToggle'
 
 interface HeroProps {
   onOpenStory?: () => void
 }
 
 export default function Hero({ onOpenStory }: HeroProps) {
+  const { t } = useLocale()
+  const h = t.hero
+
   return (
-    <header className="flex flex-col gap-3">
-      <div className="flex items-center justify-between gap-3">
-        <span className="text-sm font-medium tracking-wide text-[var(--color-ink-dim)]">
-          Leverage Decay Lab
+    <header className="flex flex-col gap-3" lang={t.htmlLang}>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+        <span className="min-w-0 text-sm font-medium tracking-wide text-[var(--color-ink-dim)]">
+          {h.eyebrow}
         </span>
-        {onOpenStory && (
-          <button
-            type="button"
-            onClick={onOpenStory}
-            className="shrink-0 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-medium text-[var(--color-ink-dim)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-ink)]"
-          >
-            📖 教學模式
-          </button>
-        )}
+        <div className="ml-auto flex shrink-0 items-center gap-2">
+          <LangToggle />
+          {onOpenStory && (
+            <button
+              type="button"
+              onClick={onOpenStory}
+              className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-medium text-[var(--color-ink-dim)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-ink)]"
+            >
+              {h.storyButton}
+            </button>
+          )}
+        </div>
       </div>
-      <h1 className="text-3xl font-bold leading-tight sm:text-4xl">槓桿衰減實驗室</h1>
-      <p className="max-w-prose text-[var(--color-ink-dim)]">
-        為什麼 2x／3x 槓桿型 ETF
-        通常不適合長期持有？親手調整市場情境，看它與大盤如何分道揚鑣。
-      </p>
+      <h1 className="text-3xl font-bold leading-tight sm:text-4xl">{h.title}</h1>
+      <p className="max-w-prose text-[var(--color-ink-dim)]">{h.hook}</p>
       <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 text-sm">
-        <span className="text-[var(--color-ink-dim)]">關鍵直覺：槓桿 ETF 追蹤的是 </span>
-        <b className="text-[var(--color-accent)]">每日報酬 × L</b>
-        <span className="text-[var(--color-ink-dim)]">，不是 </span>
-        <b className="text-[var(--color-ink)]">整段報酬 × L</b>
-        <span className="text-[var(--color-ink-dim)]"> —— 中間的波動會被一點一點磨掉。</span>
+        <span className="text-[var(--color-ink-dim)]">{h.intuitionPre}</span>
+        <b className="text-[var(--color-accent)]">{h.intuitionDaily}</b>
+        <span className="text-[var(--color-ink-dim)]">{h.intuitionMid}</span>
+        <b className="text-[var(--color-ink)]">{h.intuitionPeriod}</b>
+        <span className="text-[var(--color-ink-dim)]">{h.intuitionPost}</span>
       </div>
     </header>
   )
