@@ -28,7 +28,9 @@ export interface Takeaway {
 
 // The static UI strings that the toggle currently controls.
 export interface UIStrings {
-  // value for <html lang>
+  // BCP-47 lang tag for this locale, applied as `lang=` on the translated chrome
+  // regions (hero/takeaways/footer). The root <html> stays zh-Hant — see
+  // LocaleProvider for why.
   htmlLang: string
   hero: {
     eyebrow: string // small label above the title (the "other" language's name)

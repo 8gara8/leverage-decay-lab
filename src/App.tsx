@@ -109,7 +109,9 @@ export default function App() {
         {/* Key takeaways — full-width footer (§12 Phase 5) */}
         <Takeaways />
 
-        <footer className="text-xs text-[var(--color-ink-dim)]">{t.footer}</footer>
+        <footer lang={t.htmlLang} className="text-xs text-[var(--color-ink-dim)]">
+          {t.footer}
+        </footer>
       </main>
 
       {storyOpen && <StoryMode onSelect={applyStoryStep} onClose={() => setStoryOpen(false)} />}

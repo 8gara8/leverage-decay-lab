@@ -12,7 +12,11 @@ export default function Takeaways() {
   const { t } = useLocale()
 
   return (
-    <section aria-labelledby="takeaways-title" className="flex flex-col gap-4">
+    <section
+      aria-labelledby="takeaways-title"
+      lang={t.htmlLang}
+      className="flex flex-col gap-4"
+    >
       <h2
         id="takeaways-title"
         className="text-sm font-semibold uppercase tracking-wide text-[var(--color-ink-dim)]"

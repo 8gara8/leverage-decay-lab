@@ -14,12 +14,12 @@ export default function Hero({ onOpenStory }: HeroProps) {
   const h = t.hero
 
   return (
-    <header className="flex flex-col gap-3">
-      <div className="flex items-center justify-between gap-3">
-        <span className="text-sm font-medium tracking-wide text-[var(--color-ink-dim)]">
+    <header className="flex flex-col gap-3" lang={t.htmlLang}>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+        <span className="min-w-0 text-sm font-medium tracking-wide text-[var(--color-ink-dim)]">
           {h.eyebrow}
         </span>
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="ml-auto flex shrink-0 items-center gap-2">
           <LangToggle />
           {onOpenStory && (
             <button

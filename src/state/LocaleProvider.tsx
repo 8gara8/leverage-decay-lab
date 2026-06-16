@@ -1,16 +1,12 @@
 // LocaleProvider — React context for the Phase 5 language toggle (SPEC.md §12).
-// Holds the active locale in memory (default zh-Hant), exposes the resolved
-// string table `t`, and keeps <html lang> in sync. See src/lib/i18n.ts for the
+// Holds the active locale in memory (default zh-Hant) and exposes the resolved
+// string table `t`. The root <html lang> intentionally stays zh-Hant (the page's
+// predominant language while the analytical sections remain Chinese); only the
+// translated chrome regions mark themselves with `lang={t.htmlLang}` locally, so
+// assistive tech treats Chinese text as Chinese. See src/lib/i18n.ts for the
 // scope of what's translated and why locale isn't yet in the URL.
 
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react'
+import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
 import {
   DEFAULT_LOCALE,
   STRINGS,
@@ -35,13 +31,6 @@ const LocaleContext = createContext<LocaleContextValue>({
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState<Locale>(readInitialLocale)
-
-  // Reflect the language on the document for a11y / correct line-breaking.
-  useEffect(() => {
-    if (typeof document !== 'undefined') {
-      document.documentElement.lang = STRINGS[locale].htmlLang
-    }
-  }, [locale])
 
   const value = useMemo<LocaleContextValue>(
     () => ({ locale, setLocale, t: STRINGS[locale] }),
