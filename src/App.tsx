@@ -19,6 +19,8 @@ import Controls from './components/Controls'
 import Narrative from './components/Narrative'
 import DataTable from './components/DataTable'
 import StoryMode from './components/StoryMode'
+import Takeaways from './components/Takeaways'
+import { useLocale } from './state/LocaleProvider'
 import { CONFIG } from './lib/scenarios'
 import type { Scenario } from './lib/sim'
 
@@ -33,6 +35,7 @@ function hasShareParams(): boolean {
 
 export default function App() {
   const { state, config, result, set, reshuffle } = useSimState()
+  const { t } = useLocale()
   const isMC = result.mc !== null
   const cloud = result.mc?.cloud
   const [storyOpen, setStoryOpen] = useState(() => !hasShareParams())
@@ -103,9 +106,10 @@ export default function App() {
           </div>
         </div>
 
-        <footer className="text-xs text-[var(--color-ink-dim)]">
-          Phase 4 · 路徑動畫 · 可分享連結 · 背景運算。所有模擬皆於瀏覽器即時計算，無後端。
-        </footer>
+        {/* Key takeaways — full-width footer (§12 Phase 5) */}
+        <Takeaways />
+
+        <footer className="text-xs text-[var(--color-ink-dim)]">{t.footer}</footer>
       </main>
 
       {storyOpen && <StoryMode onSelect={applyStoryStep} onClose={() => setStoryOpen(false)} />}

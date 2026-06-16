@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Social preview source (SPEC.md §3, Phase 5). 1200×630, on-brand with the app's
+  dark navy palette + blue/red series tokens. Rasterise to og-image.png via
+  `node scripts/gen-og.mjs` (see that script for the CJK font wiring). Edit this
+  SVG, not the PNG.
+-->
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="glowBlue" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+      gradientTransform="translate(180 30) scale(520)">
+      <stop offset="0" stop-color="#60a5fa" stop-opacity="0.22" />
+      <stop offset="0.6" stop-color="#60a5fa" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glowRed" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+      gradientTransform="translate(1080 10) scale(480)">
+      <stop offset="0" stop-color="#f87171" stop-opacity="0.18" />
+      <stop offset="0.6" stop-color="#f87171" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0b1120" />
+  <rect width="1200" height="630" fill="url(#glowBlue)" />
+  <rect width="1200" height="630" fill="url(#glowRed)" />
+
+  <!-- Eyebrow -->
+  <text x="80" y="118" font-family="DejaVu Sans" font-size="26" font-weight="bold"
+    letter-spacing="6" fill="#9aa8c4">LEVERAGE DECAY LAB</text>
+
+  <!-- Title (zh-Hant) -->
+  <text x="78" y="222" font-family="WenQuanYi Zen Hei" font-size="92" font-weight="bold"
+    fill="#e8eef9">槓桿衰減實驗室</text>
+
+  <!-- Subtitle (zh-Hant) -->
+  <text x="80" y="288" font-family="WenQuanYi Zen Hei" font-size="34" fill="#9aa8c4">為什麼 2x／3x 槓桿型 ETF 不適合長期持有？</text>
+
+  <!-- English gloss -->
+  <text x="80" y="332" font-family="DejaVu Sans" font-size="24" fill="#60a5fa">Why leveraged ETFs lose to the index over time — volatility decay, made visible.</text>
+
+  <!-- Chart motif: baseline + index (blue, ends up) vs leveraged (red, decays below) -->
+  <line x1="80" y1="470" x2="1120" y2="470" stroke="#fbbf24" stroke-width="2"
+    stroke-dasharray="6 8" stroke-opacity="0.7" />
+  <polyline fill="none" stroke="#60a5fa" stroke-width="5" stroke-linejoin="round"
+    stroke-linecap="round"
+    points="80,478 200,468 320,473 440,458 560,464 680,449 800,455 920,440 1040,446 1120,430" />
+  <polyline fill="none" stroke="#f87171" stroke-width="5" stroke-linejoin="round"
+    stroke-linecap="round"
+    points="80,480 200,455 320,468 440,432 560,470 680,458 800,505 920,498 1040,540 1120,556" />
+
+  <!-- Legend -->
+  <circle cx="828" cy="120" r="7" fill="#60a5fa" />
+  <text x="844" y="128" font-family="WenQuanYi Zen Hei" font-size="24" fill="#9aa8c4">大盤 1x</text>
+  <circle cx="978" cy="120" r="7" fill="#f87171" />
+  <text x="994" y="128" font-family="WenQuanYi Zen Hei" font-size="24" fill="#9aa8c4">槓桿 Lx</text>
+
+  <!-- Domain -->
+  <text x="80" y="600" font-family="DejaVu Sans" font-size="24" font-weight="bold"
+    fill="#e8eef9">leverage-decay-lab.vercel.app</text>
+</svg>
