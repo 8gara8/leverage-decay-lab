@@ -56,3 +56,47 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Range slider — themed track + thumb, ≥44px touch target (SPEC §8.1). */
+.lab-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 36px;
+  background: transparent;
+  cursor: pointer;
+}
+.lab-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-border);
+}
+.lab-slider::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-border);
+}
+.lab-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -7px; /* center 20px thumb on 6px track */
+  height: 20px;
+  width: 20px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  border: 2px solid var(--color-bg);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+.lab-slider::-moz-range-thumb {
+  height: 20px;
+  width: 20px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  border: 2px solid var(--color-bg);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+.lab-slider:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+  border-radius: 999px;
+}
