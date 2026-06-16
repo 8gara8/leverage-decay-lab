@@ -46,6 +46,11 @@ export function useMonteCarlo(params: MCParams | null): MCResult | null {
 
   useEffect(() => {
     if (!params) return
+    // Invalidate any in-flight or older response synchronously on every key change
+    // — otherwise a worker job posted for the previous params could finish during
+    // this key's debounce window and still match latestId, briefly showing results
+    // for controls the user has already moved past.
+    const id = ++latestId.current
     const worker = workerRef.current
 
     // No worker (SSR/tests/unsupported): compute synchronously on this thread.
@@ -54,10 +59,10 @@ export function useMonteCarlo(params: MCParams | null): MCResult | null {
       return
     }
 
-    // Debounce, then offload. Each post is stamped with an incrementing id so a
-    // late response from superseded params is discarded by onmessage above.
+    // Debounce, then offload. The post carries the id stamped above; onmessage
+    // applies only the result whose id is still the latest.
     const timer = window.setTimeout(() => {
-      const msg: MCRequest = { id: ++latestId.current, ...params }
+      const msg: MCRequest = { id, ...params }
       worker.postMessage(msg)
     }, DEBOUNCE_MS)
     return () => window.clearTimeout(timer)

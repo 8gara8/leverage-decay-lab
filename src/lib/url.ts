@@ -21,7 +21,10 @@ function parseScenario(v: string | null): Scenario | null {
 }
 
 function parseNum(v: string | null): number | null {
-  if (v === null) return null
+  // Reject null AND blank/whitespace strings — Number('') is 0, which would let a
+  // hand-edited link like ?sig=&d= silently decode to min-σ / a 2-day horizon
+  // instead of falling back to the default for that field.
+  if (v === null || v.trim() === '') return null
   const n = Number(v)
   return Number.isFinite(n) ? n : null
 }

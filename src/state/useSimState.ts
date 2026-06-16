@@ -9,7 +9,7 @@
 
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
 import { CONFIG, type ScenarioConfig } from '../lib/scenarios'
-import { simulate, type AnyResult, type SimState } from '../lib/sim'
+import { monteCarlo, simulate, type AnyResult, type SimState } from '../lib/sim'
 import { encodeState, readInitialState, writeUrl } from '../lib/url'
 import { useMonteCarlo } from '../hooks/useMonteCarlo'
 
@@ -104,10 +104,21 @@ export function useSimState(): UseSimState {
     isRandom ? { sigma: state.swing, days: state.days, L: state.L, seed: state.seed } : null,
   )
 
-  // Random uses the worker result; on the very first MC frame (worker not yet
-  // resolved) `??` falls back to a one-time synchronous compute so the chart is
-  // never empty. Once `mc` is populated, drags reuse it and never hit simulate().
-  const result: AnyResult = syncResult ?? mc ?? simulate(state)
+  // First-frame fallback for random: a synchronous compute so the chart is never
+  // empty before the worker's first result. Memoized by the random params AND
+  // gated on `mc` being absent, so (a) the re-render every animation frame reuses
+  // it instead of recomputing 600 paths, and (b) a drag after the first result
+  // returns null here (mc is populated) — the worker owns those, never the main
+  // thread. Deterministic scenarios don't need it.
+  const mcFallback = useMemo<AnyResult | null>(
+    () => (isRandom && !mc ? monteCarlo(state.swing, state.days, state.L, state.seed) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isRandom, mc, state.swing, state.days, state.L, state.seed],
+  )
+
+  // Exactly one source is populated: deterministic → syncResult; random → mc, or
+  // mcFallback until the worker's first result lands. So the result is always set.
+  const result: AnyResult = (syncResult ?? mc ?? mcFallback)!
 
   return { state, config, result, set, reshuffle }
 }

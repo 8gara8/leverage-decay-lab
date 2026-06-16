@@ -69,4 +69,13 @@ describe('encodeState / decodeState', () => {
   it('returns the fallback unchanged for an empty query', () => {
     expect(decodeState('', BASE)).toEqual(BASE)
   })
+
+  it('treats blank numeric params as absent (not Number("") === 0)', () => {
+    // ?s=random&sig=&d=&L=2 must NOT decode to min-σ / a 2-day horizon.
+    const out = decodeState('?s=random&sig=&d=&L=2', BASE)
+    expect(out.scenario).toBe('random')
+    expect(out.swing).toBe(CONFIG.random.def) // scenario switched, blank σ → default
+    expect(out.days).toBe(BASE.days) // blank d → fallback, not clamped to 2
+    expect(out.L).toBe(2)
+  })
 })
