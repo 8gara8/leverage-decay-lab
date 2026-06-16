@@ -255,6 +255,16 @@ function genReturns(scenario, swing, days, startsUp): number[]
 |`textbook`    |`u = swing/100; dDown = (1 - (1+2*u)**-1)/2;` `up = startsUp ? i%2===0 : i%2===1;` `r[i] = up ? u : -dDown` (down-day sized so 2x ends flat)                                                                 |
 |`random`      |handled by `monteCarlo()` — not `genReturns`                                                                                                                                                                 |
 
+> **Port note (scaffold, reviewer P2, user-approved):** `calmUp`'s daily drift is
+> implemented as `d = (1+annual)**(1/252)-1` instead of the literal `**(1/days)`.
+> The slider is an *annualized* gain (§7 "年化漲幅"); the literal form spreads the
+> total return across the whole sim, so a 12% setting yields only ~+12% even over
+> 3 years and understates the honest leverage-wins counter-example (§8.9). The
+> `**(1/252)` form is identical at 252d (golden test unaffected) and compounds per
+> trading year beyond it. The odd-horizon pairing quirk Codex also flagged (a
+> "flat" scenario ending slightly up when `days` is odd) is left **as the verbatim
+> SPEC formula**, to revisit against `reference/legacy.html` in Phase 2.
+
 ### 6.3 buildPath, drawdown, Monte-Carlo
 
 ```typescript

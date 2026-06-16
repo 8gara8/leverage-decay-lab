@@ -128,7 +128,13 @@ export function genReturns(
     }
     case 'calmUp': {
       const annual = swing / 100
-      const d = (1 + annual) ** (1 / days) - 1
+      // Daily drift based on a TRADING YEAR so the slider's "年化漲幅" compounds
+      // per year across any horizon. SPEC §6.2 wrote `(1+annual)**(1/days)-1`,
+      // which spreads the total across the whole sim (e.g. only ~+12% over 3
+      // years); that understated the honest leverage-wins counter-example (§8.9)
+      // at long horizons. `**(1/252)` is identical at 252d (golden test holds)
+      // and compounds correctly beyond it. (Reviewer P2; user-approved deviation.)
+      const d = (1 + annual) ** (1 / 252) - 1
       const u = 0.1 / SQ252
       for (let i = 0; i < days; i++) r[i] = d + (i % 2 === 0 ? u : -u)
       return r

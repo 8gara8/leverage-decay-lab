@@ -75,6 +75,14 @@ describe('trend scenarios', () => {
     expect(r.levR).toBeGreaterThan(r.idxR)
     expect(r.levR).toBeGreaterThan(0)
   })
+
+  it('calm uptrend compounds per trading year (12%/yr over 3yr ≈ +40%, not +12%)', () => {
+    // Daily drift is anchored to a trading year, so a 12% annual setting
+    // compounds toward (1.12^3 - 1) ≈ +40% over 756 days — not spread thin.
+    const r = det('calmUp', 12, 756, 2)
+    expect(r.idxR).toBeGreaterThan(0.35)
+    expect(r.levR).toBeGreaterThan(r.idxR)
+  })
 })
 
 describe('crash — drawdown', () => {
