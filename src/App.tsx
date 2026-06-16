@@ -9,6 +9,7 @@
 
 import { useCallback, useState } from 'react'
 import { useSimState } from './state/useSimState'
+import { usePathAnimation } from './hooks/usePathAnimation'
 import Hero from './components/Hero'
 import Verdict from './components/Verdict'
 import Chart from './components/Chart'
@@ -36,6 +37,14 @@ export default function App() {
   const cloud = result.mc?.cloud
   const [storyOpen, setStoryOpen] = useState(() => !hasShareParams())
 
+  // The path "race" replays on a meaningfully new chart — scenario, leverage, or
+  // a reshuffle — plus the manual ▶︎ 重播 button. Continuous σ/days slider drags
+  // are deliberately excluded so dragging doesn't restart the animation midway.
+  const [replayNonce, setReplayNonce] = useState(0)
+  const raceKey = `${state.scenario}|${state.L}|${state.seed}|${replayNonce}`
+  const progress = usePathAnimation(raceKey)
+  const replay = useCallback(() => setReplayNonce((n) => n + 1), [])
+
   // Stable so StoryMode's step effect only fires on an actual step change.
   const selectScenario = useCallback((s: Scenario) => set({ scenario: s }), [set])
 
@@ -61,7 +70,13 @@ export default function App() {
 
           {/* Chart */}
           <div className="lg:col-start-2 lg:row-start-2">
-            <Chart points={result.points} cloud={cloud} L={state.L} />
+            <Chart
+              points={result.points}
+              cloud={cloud}
+              L={state.L}
+              progress={progress}
+              onReplay={replay}
+            />
           </div>
 
           {/* KPIs */}
@@ -89,7 +104,7 @@ export default function App() {
         </div>
 
         <footer className="text-xs text-[var(--color-ink-dim)]">
-          Phase 3 · 互動沙盒 + 教學導覽。模擬皆於瀏覽器即時計算，無後端。分享連結與路徑動畫於 Phase 4 建置中。
+          Phase 4 · 路徑動畫 · 可分享連結 · 背景運算。所有模擬皆於瀏覽器即時計算，無後端。
         </footer>
       </main>
 
