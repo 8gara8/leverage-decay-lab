@@ -18,6 +18,7 @@ import Controls from './components/Controls'
 import Narrative from './components/Narrative'
 import DataTable from './components/DataTable'
 import StoryMode from './components/StoryMode'
+import { CONFIG } from './lib/scenarios'
 import type { Scenario } from './lib/sim'
 
 // Story mode greets first-time visitors. A shared link (Phase 4 URL state)
@@ -37,6 +38,15 @@ export default function App() {
 
   // Stable so StoryMode's step effect only fires on an actual step change.
   const selectScenario = useCallback((s: Scenario) => set({ scenario: s }), [set])
+
+  // The guided walkthrough is a fixed 2x · 1-year · default-σ lesson (its copy
+  // and sparklines assume that framing). So each step applies the FULL baseline,
+  // not just the scenario — otherwise reopening the tutorial after dialing 3x or
+  // a short horizon would dismiss onto a chart that contradicts the lesson.
+  const applyStoryStep = useCallback(
+    (s: Scenario) => set({ scenario: s, L: 2, days: 252, swing: CONFIG[s].def }),
+    [set],
+  )
 
   return (
     <>
@@ -83,7 +93,7 @@ export default function App() {
         </footer>
       </main>
 
-      {storyOpen && <StoryMode onSelect={selectScenario} onClose={() => setStoryOpen(false)} />}
+      {storyOpen && <StoryMode onSelect={applyStoryStep} onClose={() => setStoryOpen(false)} />}
     </>
   )
 }
