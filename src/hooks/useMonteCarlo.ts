@@ -45,7 +45,15 @@ export function useMonteCarlo(params: MCParams | null): MCResult | null {
   const key = params ? `${params.sigma}|${params.days}|${params.L}|${params.seed}` : null
 
   useEffect(() => {
-    if (!params) return
+    if (!params) {
+      // Left the random scenario: invalidate any in-flight job (so its response is
+      // rejected on arrival) and drop the stale result, so re-entering 隨機市場
+      // recomputes the fallback for the new params instead of briefly flashing the
+      // previous session's seed/σ/days.
+      latestId.current++
+      setResult(null)
+      return
+    }
     // Invalidate any in-flight or older response synchronously on every key change
     // — otherwise a worker job posted for the previous params could finish during
     // this key's debounce window and still match latestId, briefly showing results

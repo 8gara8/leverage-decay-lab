@@ -59,7 +59,10 @@ export function decodeState(search: string, fallback: SimState): SimState {
   const lRaw = p.get('L')
   const L: Leverage = lRaw === '3' ? 3 : lRaw === '2' ? 2 : fallback.L
 
-  const startsUp = p.has('up') ? p.get('up') === '1' : fallback.startsUp
+  // Accept only the canonical 0/1; any other present value (e.g. a hand-edited
+  // up=2) falls back rather than silently flipping the direction.
+  const upRaw = p.get('up')
+  const startsUp = upRaw === '1' ? true : upRaw === '0' ? false : fallback.startsUp
 
   const seedParsed = parseNum(p.get('seed'))
   const seed = seedParsed !== null ? seedParsed >>> 0 : fallback.seed

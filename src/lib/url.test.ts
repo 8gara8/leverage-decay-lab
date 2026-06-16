@@ -78,4 +78,15 @@ describe('encodeState / decodeState', () => {
     expect(out.days).toBe(BASE.days) // blank d → fallback, not clamped to 2
     expect(out.L).toBe(2)
   })
+
+  it('accepts only 0/1 for the textbook direction and falls back otherwise', () => {
+    const up = (s: string, dir: boolean) =>
+      decodeState(s, { ...BASE, scenario: 'textbook', startsUp: dir }).startsUp
+    // Malformed up=2 keeps the fallback direction (either way).
+    expect(up('?s=textbook&up=2', true)).toBe(true)
+    expect(up('?s=textbook&up=2', false)).toBe(false)
+    // Canonical values still parse.
+    expect(up('?s=textbook&up=0', true)).toBe(false)
+    expect(up('?s=textbook&up=1', false)).toBe(true)
+  })
 })
