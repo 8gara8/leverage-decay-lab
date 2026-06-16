@@ -1,7 +1,9 @@
-// Chart.tsx — custom <canvas> renderer (SPEC.md §8.4, §9). Phase 2 is a static
-// draw: amber baseline at 100, blue index line, red leveraged line, plus the
-// faint Monte-Carlo cloud + median. The `progress` prop (0..1 left-to-right
-// reveal) is honoured now so Phase 4 can animate without touching this file.
+// Chart.tsx — custom <canvas> renderer (SPEC.md §8.4, §9). Draws the amber
+// baseline at 100, the blue index line, the red leveraged line, and the faint
+// Monte-Carlo cloud + median. Phase 4 animates the "race": `progress` (0..1) is
+// a linear timeline — the two lines reveal left-to-right (eased) over the first
+// LINE_FRAC, then the cloud fades in over the remainder. A ▶︎ 重播 button
+// re-runs it via `onReplay`.
 
 import { useEffect, useRef, useState } from 'react'
 import type { Leverage, PathPoint } from '../lib/sim'
@@ -11,14 +13,22 @@ interface ChartProps {
   cloud?: number[][]
   L: Leverage
   progress?: number
+  onReplay?: () => void
 }
 
 const COLOR_IDX = '#60a5fa' // blue — index 1x
 const COLOR_LEV = '#f87171' // red — leveraged Lx
 const COLOR_BASE = '#fbbf24' // amber — baseline 100
 
+// Lines finish at this fraction of the timeline; the cloud fades over the rest.
+const LINE_FRAC = 0.8
+
 function clamp01(x: number): number {
   return x < 0 ? 0 : x > 1 ? 1 : x
+}
+
+function easeOut(x: number): number {
+  return 1 - Math.pow(1 - x, 3)
 }
 
 // Draw a value series (indexed by day) with a fractional left-to-right reveal.
@@ -98,7 +108,11 @@ function draw(
   const xAt = (day: number) => padL + (day / n) * plotW
   const yAt = (v: number) => padT + (1 - (v - lo) / range) * plotH
 
-  const reveal = clamp01(progress)
+  // Lines reveal left-to-right over the first LINE_FRAC of the timeline (eased);
+  // the Monte-Carlo cloud then fades in over the remainder (SPEC §8.4).
+  const t = clamp01(progress)
+  const reveal = easeOut(clamp01(t / LINE_FRAC))
+  const cloudOpacity = clamp01((t - LINE_FRAC) / (1 - LINE_FRAC))
 
   // Baseline at 100 (amber, dashed) + label.
   if (100 >= lo && 100 <= hi) {
@@ -118,11 +132,16 @@ function draw(
     ctx.fillText('100', padL + 2, y - 3)
   }
 
-  // Monte-Carlo cloud (faint red), drawn first so the lines sit on top.
-  if (cloud && cloud.length) {
+  // Monte-Carlo cloud (faint red), drawn first so the lines sit on top. It is
+  // drawn full-width and fades in via opacity only after the median lines have
+  // finished drawing (SPEC §8.4).
+  if (cloud && cloud.length && cloudOpacity > 0) {
+    ctx.save()
+    ctx.globalAlpha = cloudOpacity
     ctx.strokeStyle = 'rgba(248,113,113,0.10)'
     ctx.lineWidth = 1
-    for (const path of cloud) drawSeries(ctx, path, xAt, yAt, reveal)
+    for (const path of cloud) drawSeries(ctx, path, xAt, yAt, 1)
+    ctx.restore()
   }
 
   // Index line (blue).
@@ -138,7 +157,7 @@ function draw(
   drawSeries(ctx, points.map((p) => p.lev), xAt, yAt, reveal)
 }
 
-export default function Chart({ points, cloud, L, progress = 1 }: ChartProps) {
+export default function Chart({ points, cloud, L, progress = 1, onReplay }: ChartProps) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [size, setSize] = useState({ w: 0, h: 0 })
@@ -167,7 +186,17 @@ export default function Chart({ points, cloud, L, progress = 1 }: ChartProps) {
   const isMC = !!cloud && cloud.length > 0
 
   return (
-    <figure className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-lg">
+    <figure className="relative rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-lg">
+      {onReplay && (
+        <button
+          type="button"
+          onClick={onReplay}
+          aria-label="重新播放動畫"
+          className="absolute right-5 top-5 z-10 inline-flex items-center gap-1 rounded-full border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 py-1 text-[11px] font-medium text-[var(--color-ink-dim)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-ink)]"
+        >
+          ▶︎ 重播
+        </button>
+      )}
       <div ref={wrapRef} className="w-full">
         <canvas
           ref={canvasRef}

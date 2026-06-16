@@ -5,6 +5,7 @@
 import type { ReactNode } from 'react'
 import type { ScenarioConfig } from '../lib/scenarios'
 import type { Leverage, SimState } from '../lib/sim'
+import ShareLink from './ShareLink'
 
 interface ControlsProps {
   state: SimState
@@ -118,6 +119,9 @@ export default function Controls({ state, config, onChange, onReshuffle }: Contr
           🎲 重新洗牌
         </button>
       )}
+
+      {/* Share the current config (SPEC §8.7) */}
+      <ShareLink state={state} />
     </div>
   )
 }
