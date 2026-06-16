@@ -349,6 +349,10 @@ export interface SimInputs {
   seed: number
 }
 
+// User-controlled, URL-shareable state (SPEC.md §4). Structurally identical to
+// simulate()'s input, so the two stay in lockstep.
+export type SimState = SimInputs
+
 export function simulate(inputs: SimInputs): AnyResult {
   const { scenario, swing, days, L, startsUp, seed } = inputs
 
