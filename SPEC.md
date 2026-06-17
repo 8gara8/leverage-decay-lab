@@ -18,7 +18,7 @@ Audience: retail investors and a general Taiwanese audience (UI is **Traditional
 
 **Design goals (equal priority to correctness):**
 
-1. **Easy to understand** — a guided story walks a newcomer through 3 "aha" moments before exposing the full sandbox.
+1. **Easy to understand** — a live verdict banner states the bottom line in plain language, and the scenario picker sits up front so a newcomer can step through the "aha" scenarios themselves. (The earlier guided-overlay "story mode" was removed — see §8.6.)
 1. **Interesting to play with** — animated path "race", instant feedback, shareable links to eye-opening configs.
 
 **Key features**
@@ -100,7 +100,7 @@ leverage-decay-lab/
 │   │   ├── Kpi.tsx             # Single KPI card (count-up animated value)
 │   │   ├── Narrative.tsx       # Result sentence + intuition callout
 │   │   ├── DataTable.tsx       # First-days table (collapsible on mobile)
-│   │   └── StoryMode.tsx       # Guided 3-step walkthrough overlay (Phase 3)
+│   │   └── (StoryMode.tsx)     # Guided 3-step overlay — REMOVED, see §8.6
 │   ├── hooks/
 │   │   ├── useCountUp.ts       # Animates a number to a target
 │   │   └── usePathAnimation.ts # Drives left-to-right reveal progress (0→1)
@@ -373,13 +373,15 @@ On scenario/param change, animate the two lines drawing left-to-right over ~900m
 **8.5 KPI count-up (`Kpi.tsx` + `useCountUp.ts`).**
 KPI values animate from their previous number to the new target (~400ms) so changes feel responsive. Four KPIs: 大盤(1x)報酬 · Lx ETF報酬 · 「和直接買大盤相比」(diff, the highlighted card) · Lx 途中最大跌幅 (with 大盤 sub).
 
-**8.6 Story mode (`StoryMode.tsx`).**
-First visit (no URL params) opens a 3-step guided overlay that auto-sets scenarios and annotates the chart:
-
-1. 「震盪盤整」— 大盤原地踏步，2x 卻虧錢。
-1. 「上漲卻震盪」— 大盤漲，2x 還是輸。
-1. 「平穩上漲」— 誠實：這時候槓桿才有利。
-   Each step has 上一步/下一步 and a 「自己玩玩看 →」 button that dismisses into the full sandbox. A persistent 「教學模式」 button can reopen it. Dismissed state is fine to keep only in memory (no storage needed); if URL params are present, skip story mode and go straight to sandbox.
+**8.6 Story mode (`StoryMode.tsx`) — REMOVED (2026-06-17, product decision).**
+Originally a 3-step guided overlay (「教學模式」) that auto-set scenarios for
+first-time visitors. Dropped because the audience is adults (retail investors)
+and the "tutorial mode" framing read as patronising. The component, its hero
+re-open button, and the `STORY_STEPS` copy were deleted. The newcomer on-ramp is
+now the always-on verdict banner (§8.2) plus the scenario picker, which on mobile
+sits directly under the hero (above the chart) so choosing a scenario is the
+first action (§8.1). The original 3 "aha" scenarios remain reachable as ordinary
+cards: 震盪盤整 → 上漲卻震盪 → 平穩上漲.
 
 **8.7 Shareable URL (`url.ts` + `useSimState.ts`).**
 Encode `SimState` into query params (`?s=choppyFlat&sig=40&d=252&L=2`) and update on change via `history.replaceState`. On load, hydrate state from the URL. Add a 「🔗 複製連結」 button. This makes a striking config one tap to share — key for the social-media goal.
@@ -534,7 +536,7 @@ Each phase ends with something runnable and a clear checkpoint.
 
 ### Phase 3 — Design upgrades
 
-1. `Verdict.tsx` banner (§8.2). 2. `ScenarioCards.tsx` with sparkline previews (§8.3). 3. KPI count-up (§8.5). 4. Scenario-change CSS transitions. 5. `StoryMode.tsx` guided walkthrough (§8.6).
+1. `Verdict.tsx` banner (§8.2). 2. `ScenarioCards.tsx` with sparkline previews (§8.3). 3. KPI count-up (§8.5). 4. Scenario-change CSS transitions. 5. ~~`StoryMode.tsx` guided walkthrough (§8.6)~~ — built in Phase 3, later removed (§8.6).
    **Milestone:** newcomer can understand the lesson without touching a control; looks polished.
 
 ### Phase 4 — Engagement & performance

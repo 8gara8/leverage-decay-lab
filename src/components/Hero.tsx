@@ -1,15 +1,10 @@
 // Hero.tsx — title, hook line, and the core-intuition equation box (SPEC.md §9),
-// plus a persistent 「教學模式」 button that reopens the guided walkthrough (§8.6)
-// and the Phase 5 language toggle (§12). Static copy is locale-keyed via i18n.
+// plus the Phase 5 language toggle (§12). Static copy is locale-keyed via i18n.
 
 import { useLocale } from '../state/LocaleProvider'
 import LangToggle from './LangToggle'
 
-interface HeroProps {
-  onOpenStory?: () => void
-}
-
-export default function Hero({ onOpenStory }: HeroProps) {
+export default function Hero() {
   const { t } = useLocale()
   const h = t.hero
 
@@ -21,15 +16,6 @@ export default function Hero({ onOpenStory }: HeroProps) {
         </span>
         <div className="ml-auto flex shrink-0 items-center gap-2">
           <LangToggle />
-          {onOpenStory && (
-            <button
-              type="button"
-              onClick={onOpenStory}
-              className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-medium text-[var(--color-ink-dim)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-ink)]"
-            >
-              {h.storyButton}
-            </button>
-          )}
         </div>
       </div>
       <h1 className="text-3xl font-bold leading-tight sm:text-4xl">{h.title}</h1>

@@ -71,8 +71,8 @@ export function useSimState(): UseSimState {
 
   // Keep the address bar in lockstep with state (replaceState — no history spam).
   // The first run only adopts the landing URL as a baseline without rewriting, so
-  // a pristine fresh visit keeps a clean URL (story mode still greets) and we
-  // canonicalise only once the user actually changes something. Comparing the
+  // a pristine fresh visit keeps a clean URL and we canonicalise only once the
+  // user actually changes something. Comparing the
   // encoded string also makes this idempotent under StrictMode's double effect.
   const lastWritten = useRef<string | null>(null)
   useEffect(() => {

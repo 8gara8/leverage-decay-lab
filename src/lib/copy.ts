@@ -30,29 +30,6 @@ export const SUBTITLE: Record<Scenario, string> = {
   textbook: '完美交替，2x 最後剛好打平',
 }
 
-// SPEC.md §8.6 — the 3-step guided walkthrough. Each step auto-selects a
-// scenario and explains one "aha": chop drags a flat market down, an
-// up-but-volatile market still loses, and only a calm uptrend rewards leverage.
-export interface StoryStep {
-  scenario: Scenario
-  body: string
-}
-
-export const STORY_STEPS: StoryStep[] = [
-  {
-    scenario: 'choppyFlat',
-    body: '大盤上上下下、最後回到原點，2x ETF 卻在來回震盪間被一刀刀磨掉，變成虧錢。這就是「波動度衰減」。',
-  },
-  {
-    scenario: 'upChoppy',
-    body: '就算大盤一年漲約 10%，只要路上夠顛簸，2x ETF 仍會輸給大盤——顛簸的路把多出來的報酬偷走了。',
-  },
-  {
-    scenario: 'calmUp',
-    body: '誠實的反例：當行情穩穩上漲、波動很低時，每日複利反而對槓桿有利，這時候 2x 才真的贏過大盤。',
-  },
-]
-
 export interface Narrative {
   cls: 'red' | 'green'
   html: string

@@ -1,8 +1,8 @@
 // Sparkline.tsx — a tiny inline-SVG preview of a scenario's shape (SPEC.md §8.3).
 // Draws the index (blue) vs leveraged (red) net-value lines at the scenario's
 // default settings on a shared y-scale, so the divergence reads at a glance.
-// Used by ScenarioCards (small) and StoryMode (large). It's decorative — the
-// card title/subtitle carry the meaning — so the SVG is aria-hidden.
+// Used by ScenarioCards for the inline preview. It's decorative — the card
+// title/subtitle carry the meaning — so the SVG is aria-hidden.
 
 import { useMemo } from 'react'
 import { simulate, type Scenario } from '../lib/sim'
