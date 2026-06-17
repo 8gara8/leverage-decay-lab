@@ -6,8 +6,8 @@
 //
 // Deliberately OUT OF SCOPE for this scaffold — the analytical copy that is
 // tightly coupled to live numbers and zh-Hant phrasing:
-//   • src/lib/copy.ts   (scenario titles/subtitles, resultSentence, intuition, story steps)
-//   • Verdict / Controls / KpiGrid / ScenarioCards / Narrative / DataTable / StoryMode labels
+//   • src/lib/copy.ts   (scenario titles/subtitles, resultSentence, intuition)
+//   • Verdict / Controls / KpiGrid / ScenarioCards / Narrative / DataTable labels
 // Those stay zh-Hant for now. To finish localisation, give each a locale-keyed
 // entry the same way `STRINGS` does here, then read it via `useLocale().t`.
 //
@@ -34,7 +34,6 @@ export interface UIStrings {
   htmlLang: string
   hero: {
     eyebrow: string // small label above the title (the "other" language's name)
-    storyButton: string
     title: string
     hook: string
     intuitionPre: string
@@ -61,7 +60,6 @@ export const STRINGS: Record<Locale, UIStrings> = {
     htmlLang: 'zh-Hant',
     hero: {
       eyebrow: 'Leverage Decay Lab',
-      storyButton: '📖 教學模式',
       title: '槓桿衰減實驗室',
       hook: '為什麼 2x／3x 槓桿型 ETF 通常不適合長期持有？親手調整市場情境，看它與大盤如何分道揚鑣。',
       intuitionPre: '關鍵直覺：槓桿 ETF 追蹤的是 ',
@@ -98,7 +96,6 @@ export const STRINGS: Record<Locale, UIStrings> = {
     htmlLang: 'en',
     hero: {
       eyebrow: '槓桿衰減實驗室',
-      storyButton: '📖 Guided tour',
       title: 'Leverage Decay Lab',
       hook: 'Why are 2x / 3x leveraged ETFs usually a poor long-term hold? Tweak the market scenario yourself and watch the fund part ways with the index.',
       intuitionPre: 'The key intuition: a leveraged ETF tracks ',
